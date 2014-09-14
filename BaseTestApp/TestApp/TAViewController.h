@@ -8,7 +8,8 @@
 
 #import <UIKit/UIKit.h>
 
-@interface TAViewController : UIViewController
+@interface TAViewController : UIViewController<NSURLSessionDelegate, NSURLSessionDataDelegate>
+
 @property (strong, nonatomic) IBOutlet UITextField *udid;
 @property (strong, nonatomic) IBOutlet UITextField *commandUuid;
 @property (strong, nonatomic) IBOutlet UILabel *resultLabel;
