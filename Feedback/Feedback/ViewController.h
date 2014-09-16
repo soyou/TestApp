@@ -14,8 +14,10 @@
 @property (strong, nonatomic) IBOutlet UITextField *feedbackStringType;
 @property (strong, nonatomic) IBOutlet UIButton *feedbackWriteButton;
 @property (strong, nonatomic) IBOutlet UILabel *feedbackNumberTypeValueLabel;
+@property (strong, nonatomic) IBOutlet UIButton *configWriteButton;
 
 - (IBAction)feedbackWrite:(id)sender;
 - (IBAction)feedbackStringTypeEditingDidEnd:(id)sender;
 - (IBAction)feedbackNumberTypeValueChanged:(UISlider *)sender;
+- (IBAction)configWrite:(id)sender;
 @end

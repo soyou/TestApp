@@ -40,22 +40,70 @@ static NSString * const kFeedbackStringValueKey = @"stringValue";
     
     // Call readDefaultsValues to make sure default values are read at least once.
     [self readDefaultsValues];
-    
-    _feedbackNumberTypeValueLabel.text = [NSString stringWithFormat:@"%1.0f", _feedbackNumberType.value];
 }
 
 - (void)readDefaultsValues {
-    NSLog(@"Config과 Feedback 읽기 및 쓰기");
+    NSLog(@"Config과 Feedback 읽기");
     
     NSDictionary *serverConfig = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kConfigurationKey];
     // serverConfig를 이용해서 필요한 설정을 해본다.
+    if (!serverConfig) {
+        NSLog(@"Config empty");
+    } else {
+        NSNumber *booleandValue = serverConfig[kFeedbackBooleandValueKey];
+        if (booleandValue && [booleandValue isKindOfClass:[NSNumber class]]) {
+            NSLog(@"config의 boolean value = %@", [NSString stringWithFormat:@"%@", ([booleandValue boolValue]?@"YES":@"NO")]);
+        } else {
+            NSLog(@"config에 boolean value 없음");
+        }
+        
+        NSNumber *numberValue = serverConfig[kFeedbackNumberValueKey];
+        if (numberValue && [numberValue isKindOfClass:[NSNumber class]]) {
+            NSLog(@"config의 number value = %d", [numberValue intValue]);
+        } else {
+            NSLog(@"config에 number value 없음");
+        }
+        
+        NSString *stringValue = serverConfig[kFeedbackStringValueKey];
+        if (stringValue && [stringValue isKindOfClass:[NSString class]]) {
+            NSLog(@"config의 string value = %@", stringValue);
+        } else {
+            NSLog(@"config에 string value 없음");
+        }
+    }
+    
     
     // Fetch the success and failure count values from NSUserDefaults to display.
     // Data validation for feedback values is a good idea, in case the application wrote out an unexpected value.
     NSDictionary *feedback = [[NSUserDefaults standardUserDefaults] dictionaryForKey:kFeedbackKey];
+    
+    NSNumber *booleandValue = feedback[kFeedbackBooleandValueKey];
+    if (booleandValue && [booleandValue isKindOfClass:[NSNumber class]]) {
+        NSLog(@"feedback의 boolean value 적용 = %@", [NSString stringWithFormat:@"%@", ([booleandValue boolValue]?@"YES":@"NO")]);
+        _feedbackBooleanType.on = [booleandValue boolValue];
+    } else {
+        NSLog(@"기본 boolean value 적용");
+        _feedbackBooleanType.on = YES;
+    }
+    
+    
+    NSNumber *numberValue = feedback[kFeedbackNumberValueKey];
+    if (numberValue && [numberValue isKindOfClass:[NSNumber class]]) {
+        NSLog(@"feedback의 number value 적용 = %d", [numberValue intValue]);
+        _feedbackNumberType.value = [numberValue integerValue];
+    } else {
+        NSLog(@"기본 number value 적용");
+        _feedbackNumberType.value = 50;
+    }
+    _feedbackNumberTypeValueLabel.text = [NSString stringWithFormat:@"%1.0f", _feedbackNumberType.value];
+    
+    
     NSString *stringValue = feedback[kFeedbackStringValueKey];
     if (stringValue && [stringValue isKindOfClass:[NSString class]]) {
+        NSLog(@"feedback의 string value 적용 = %@", stringValue);
         _feedbackStringType.text = stringValue;
+    } else {
+        NSLog(@"기본 string value 적용");
     }
 }
 
@@ -66,16 +114,7 @@ static NSString * const kFeedbackStringValueKey = @"stringValue";
 
 
 - (IBAction)feedbackWrite:(id)sender {
-    // 각각의 UI의 값을 읽어온다.
-    NSLog(@"UI값 읽기");
-    if( _feedbackBooleanType.isOn ) {
-        NSLog(@"boolean type : TRUE");
-    } else {
-        NSLog(@"boolean type : FALSE");
-    }
-    NSLog(@"number type : %1.0f", _feedbackNumberType.value);
-    
-    NSLog(@"string type : %@", _feedbackStringType.text);
+    NSLog(@"feedback Write");
     
     // userDefault에 write 한다.
     // Write the updated value into the feedback dictionary each time it changes.
@@ -83,15 +122,37 @@ static NSString * const kFeedbackStringValueKey = @"stringValue";
     if (!feedback) {
         feedback = [NSMutableDictionary dictionary];
     }
-    feedback[kFeedbackBooleandValueKey] = @(_feedbackBooleanType.isOn);
+    NSLog(@"boolean type : %@", [NSString stringWithFormat:@"%@", (_feedbackBooleanType.on?@"YES":@"NO")]);
+    feedback[kFeedbackBooleandValueKey] = @(_feedbackBooleanType.on);
+    NSLog(@"number type : %1.0f", _feedbackNumberType.value);
     feedback[kFeedbackNumberValueKey] = @(_feedbackNumberType.value);
+    NSLog(@"string type : %@", _feedbackStringType.text);
     feedback[kFeedbackStringValueKey] = _feedbackStringType.text;
+    
     [[NSUserDefaults standardUserDefaults] setObject:feedback forKey:kFeedbackKey];
 }
 
 
 - (IBAction)feedbackNumberTypeValueChanged:(UISlider *)sender {
     _feedbackNumberTypeValueLabel.text = [NSString stringWithFormat:@"%1.0f", sender.value];
+}
+
+- (IBAction)configWrite:(id)sender {
+    NSLog(@"config Write");
+    NSMutableDictionary *serverConfig = [[[NSUserDefaults standardUserDefaults] dictionaryForKey:kConfigurationKey] mutableCopy];
+    if (!serverConfig) {
+        NSLog(@"Config object empty, and new object create");
+        serverConfig = [NSMutableDictionary dictionary];
+    }
+    
+    NSLog(@"boolean type : %@", [NSString stringWithFormat:@"%@", (_feedbackBooleanType.on?@"YES":@"NO")]);
+    serverConfig[kFeedbackBooleandValueKey] = @(_feedbackBooleanType.on);
+    NSLog(@"number type : %1.0f", _feedbackNumberType.value);
+    serverConfig[kFeedbackNumberValueKey] = @(_feedbackNumberType.value);
+    NSLog(@"string type : %@", _feedbackStringType.text);
+    serverConfig[kFeedbackStringValueKey] = _feedbackStringType.text;
+    
+    [[NSUserDefaults standardUserDefaults] setObject:serverConfig forKey:kConfigurationKey];
 }
 
 - (IBAction)feedbackStringTypeEditingDidEnd:(id)sender {
