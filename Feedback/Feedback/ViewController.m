@@ -23,6 +23,8 @@ static NSString * const kFeedbackKey = @"com.apple.feedback.managed";
 static NSString * const kFeedbackBooleandValueKey = @"booleandValue";
 static NSString * const kFeedbackNumberValueKey = @"numberValue";
 static NSString * const kFeedbackStringValueKey = @"stringValue";
+static NSString * const kFeedbackDicValueKey = @"dicValue";
+static NSString * const kFeedbackArrayValueKey = @"arrayValue";
 
 
 
@@ -128,6 +130,20 @@ static NSString * const kFeedbackStringValueKey = @"stringValue";
     feedback[kFeedbackNumberValueKey] = @(_feedbackNumberType.value);
     NSLog(@"string type : %@", _feedbackStringType.text);
     feedback[kFeedbackStringValueKey] = _feedbackStringType.text;
+    
+    // 콜렉션 객체 삽입
+    NSMutableDictionary *dicSample = [NSMutableDictionary dictionary];
+    dicSample[kFeedbackBooleandValueKey] = @(_feedbackBooleanType.on);
+    dicSample[kFeedbackNumberValueKey] = @(_feedbackNumberType.value);
+    dicSample[kFeedbackStringValueKey] = _feedbackStringType.text;
+    
+    NSMutableArray *arraySample = [[NSMutableArray alloc] init];
+    [arraySample addObject:@(_feedbackBooleanType.on)];
+    [arraySample addObject:@(_feedbackNumberType.value)];
+    [arraySample addObject:_feedbackStringType.text];
+    
+    feedback[kFeedbackDicValueKey] = dicSample;
+    feedback[kFeedbackArrayValueKey] = arraySample;
     
     [[NSUserDefaults standardUserDefaults] setObject:feedback forKey:kFeedbackKey];
 }
