@@ -97,7 +97,7 @@ static NSString * const kFeedbackArrayValueKey = @"arrayValue";
         NSLog(@"기본 number value 적용");
         _feedbackNumberType.value = 50;
     }
-    _feedbackNumberTypeValueLabel.text = [NSString stringWithFormat:@"%1.0f", _feedbackNumberType.value];
+    _feedbackNumberTypeValueLabel.text = [NSString stringWithFormat:@"%d", [[NSNumber numberWithFloat:_feedbackNumberType.value] intValue]];
     
     
     NSString *stringValue = feedback[kFeedbackStringValueKey];
@@ -126,31 +126,36 @@ static NSString * const kFeedbackArrayValueKey = @"arrayValue";
     }
     NSLog(@"boolean type : %@", [NSString stringWithFormat:@"%@", (_feedbackBooleanType.on?@"YES":@"NO")]);
     feedback[kFeedbackBooleandValueKey] = @(_feedbackBooleanType.on);
-    NSLog(@"number type : %1.0f", _feedbackNumberType.value);
+    NSLog(@"number type : %d", [[NSNumber numberWithFloat:_feedbackNumberType.value] intValue]);
     feedback[kFeedbackNumberValueKey] = @(_feedbackNumberType.value);
     NSLog(@"string type : %@", _feedbackStringType.text);
     feedback[kFeedbackStringValueKey] = _feedbackStringType.text;
     
     // 콜렉션 객체 삽입
-    NSMutableDictionary *dicSample = [NSMutableDictionary dictionary];
-    dicSample[kFeedbackBooleandValueKey] = @(_feedbackBooleanType.on);
-    dicSample[kFeedbackNumberValueKey] = @(_feedbackNumberType.value);
-    dicSample[kFeedbackStringValueKey] = _feedbackStringType.text;
-    
-    NSMutableArray *arraySample = [[NSMutableArray alloc] init];
-    [arraySample addObject:@(_feedbackBooleanType.on)];
-    [arraySample addObject:@(_feedbackNumberType.value)];
-    [arraySample addObject:_feedbackStringType.text];
-    
-    feedback[kFeedbackDicValueKey] = dicSample;
-    feedback[kFeedbackArrayValueKey] = arraySample;
+    if (_feedbackCollectionType.isOn) {
+        NSMutableDictionary *dicSample = [NSMutableDictionary dictionary];
+        dicSample[kFeedbackBooleandValueKey] = @(_feedbackBooleanType.on);
+        dicSample[kFeedbackNumberValueKey] = @(_feedbackNumberType.value);
+        dicSample[kFeedbackStringValueKey] = _feedbackStringType.text;
+        
+        NSMutableArray *arraySample = [[NSMutableArray alloc] init];
+        [arraySample addObject:@(_feedbackBooleanType.on)];
+        [arraySample addObject:@(_feedbackNumberType.value)];
+        [arraySample addObject:_feedbackStringType.text];
+        
+        feedback[kFeedbackDicValueKey] = dicSample;
+        feedback[kFeedbackArrayValueKey] = arraySample;
+    } else {
+        [feedback removeObjectForKey:kFeedbackArrayValueKey];
+        [feedback removeObjectForKey:kFeedbackDicValueKey];
+    }
     
     [[NSUserDefaults standardUserDefaults] setObject:feedback forKey:kFeedbackKey];
 }
 
 
 - (IBAction)feedbackNumberTypeValueChanged:(UISlider *)sender {
-    _feedbackNumberTypeValueLabel.text = [NSString stringWithFormat:@"%1.0f", sender.value];
+    _feedbackNumberTypeValueLabel.text = [NSString stringWithFormat:@"%d", [[NSNumber numberWithFloat:sender.value] intValue]];
 }
 
 - (IBAction)configWrite:(id)sender {

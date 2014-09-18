@@ -15,6 +15,7 @@
 @property (strong, nonatomic) IBOutlet UIButton *feedbackWriteButton;
 @property (strong, nonatomic) IBOutlet UILabel *feedbackNumberTypeValueLabel;
 @property (strong, nonatomic) IBOutlet UIButton *configWriteButton;
+@property (strong, nonatomic) IBOutlet UISwitch *feedbackCollectionType;
 
 - (IBAction)feedbackWrite:(id)sender;
 - (IBAction)feedbackStringTypeEditingDidEnd:(id)sender;
